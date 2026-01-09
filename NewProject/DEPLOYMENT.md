@@ -53,12 +53,12 @@ git push -u origin main
 
    **Secret 1: HRONE_USERNAME**
    - Name: `HRONE_USERNAME`
-   - Value: `dhiraj.kumar@ongrid.in`
+   - Value: `*****`
    - Click **"Add secret"**
 
    **Secret 2: HRONE_PASSWORD**
    - Name: `HRONE_PASSWORD`
-   - Value: `Dk@motihari1`
+   - Value: `*****`
    - Click **"Add secret"**
 
    **Secret 3: HRONE_COOKIE** (Optional but recommended)
@@ -129,8 +129,8 @@ You can manually trigger the workflow:
 Test locally first:
 
 ```bash
-export HRONE_USERNAME="dhiraj.kumar@ongrid.in"
-export HRONE_PASSWORD="Dk@motihari1"
+export HRONE_USERNAME="*****"
+export HRONE_PASSWORD="*****"
 export HRONE_COOKIE="<your cookie>"
 
 ./gradlew bootRun

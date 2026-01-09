@@ -3,6 +3,8 @@ package com.example.attendancebot;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.TimeZone;
 import org.springframework.boot.CommandLineRunner;
@@ -25,8 +27,10 @@ public class AttendanceBotApplication implements CommandLineRunner {
 
         // Determine whether this run is IN or OUT based on argument
         String mode = System.getenv("ATT_MODE");  // passed from workflow
+        log.info("Attendance mode: " + mode);
 
         String token = client.loginAndGetToken();
+        log.info("Attendance bot token: " + token);
 
         if ("IN".equalsIgnoreCase(mode)) {
             client.markAttendance(token, "A");   // A = IN

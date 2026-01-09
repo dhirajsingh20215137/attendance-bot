@@ -14,6 +14,8 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class HrOneClient {
@@ -54,6 +56,7 @@ public class HrOneClient {
 
         Map<?, ?> response =
                 restTemplate.postForObject(url, request, Map.class);
+        log.info(response.toString());
 
         return (String) response.get("access_token");
     }

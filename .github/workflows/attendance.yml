@@ -6,7 +6,7 @@ permissions:
 on:
   schedule:
     - cron: "45 3 * * *"     # IN at 09:15 AM IST
-    - cron: "*/5 * * * *"    # OUT every 5 minutes (for testing)
+    - cron: "30 12 * * *"    # OUT at 06:00 PM IST
   workflow_dispatch:
 
 jobs:

@@ -1,9 +1,12 @@
 name: Attendance Bot
 
+permissions:
+  contents: read
+
 on:
   schedule:
-    - cron: "45 3 * * *"   # 09:15 AM IST → IN
-    - cron: "*/5 * * * *"  # 05:40 PM IST → OUT (updated)
+    - cron: "45 3 * * *"     # IN at 09:15 AM IST
+    - cron: "*/5 * * * *"    # OUT every 5 minutes (for testing)
   workflow_dispatch:
 
 jobs:
@@ -12,6 +15,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Debug Time
+        run: |
+          echo "Triggered at UTC time: $(date -u)"
+          echo "Triggered at IST time: $(TZ='Asia/Kolkata' date)"
+          echo "Event schedule: ${{ github.event.schedule }}"
 
       - uses: actions/setup-java@v4
         with:

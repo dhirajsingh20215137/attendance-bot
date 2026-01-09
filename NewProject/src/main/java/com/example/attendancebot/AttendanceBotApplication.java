@@ -39,7 +39,7 @@ public class AttendanceBotApplication implements CommandLineRunner {
         } 
         else if ("OUT".equalsIgnoreCase(mode)) {
             log.info("🔵 Marking OUT attendance...");
-            client.markAttendance(token, "P");
+            client.markAttendance(token, "A");   // OUT also uses A
             log.info("🏁 Finished OUT attempt");
         } 
         else {

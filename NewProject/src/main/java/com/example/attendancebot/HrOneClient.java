@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.ZoneId;
@@ -19,8 +20,8 @@ import org.slf4j.LoggerFactory;
 
 @Component
 public class HrOneClient {
-        private static final Logger log = LoggerFactory.getLogger(HrOneClient.class);
 
+    private static final Logger log = LoggerFactory.getLogger(HrOneClient.class);
     private final RestTemplate restTemplate = new RestTemplate();
 
     @Value("${hrone.username}")
@@ -32,15 +33,12 @@ public class HrOneClient {
     @Value("${hrone.employeeId}")
     private int employeeId;
 
-    /**
-     * Optional: full Cookie header value copied from browser, e.g.
-     * "JwtTokenCookie=...; RefreshTokenCookie=..."
-     */
     @Value("${hrone.cookie:}")
     private String cookieHeader;
 
     public String loginAndGetToken() {
 
+        log.info("➡ Starting login request to HROne...");
         String url = "https://gateway.app.hrone.cloud/oauth2/token";
 
         HttpHeaders headers = new HttpHeaders();
@@ -53,54 +51,40 @@ public class HrOneClient {
         body.add("loginType", "1");
         body.add("companyDomainCode", "handyonline");
 
+        log.info("📤 Login request body: {}", body);
+
         HttpEntity<?> request = new HttpEntity<>(body, headers);
 
-        Map<?, ?> response =
-                restTemplate.postForObject(url, request, Map.class);
-        log.info(response.toString());
+        Map<?, ?> response = restTemplate.postForObject(url, request, Map.class);
+        log.info("✅ Login response: {}", response);
 
         return (String) response.get("access_token");
     }
 
     public void markAttendance(String token, String requestType) {
 
-        String url =
-                "https://app.hrone.cloud/api/timeoffice/mobile/checkin/Attendance/Request";
+        log.info("➡ Starting attendance marking...");
+        log.info("➡ Request Type (A=IN, P=OUT): {}", requestType);
+
+        String url = "https://app.hrone.cloud/api/timeoffice/mobile/checkin/Attendance/Request";
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         headers.setBearerAuth(token);
         headers.add("domaincode", "handyonline");
 
-        // Match working browser curl as closely as possible
+        // Additional request headers
         headers.add("accept", "application/json, text/plain, */*");
-        headers.add("accept-language", "en-GB,en-US;q=0.9,en;q=0.8");
-        headers.add("accessmode", "W");
-        headers.add("cache-control", "no-cache");
-        headers.add("pragma", "no-cache");
         headers.add("origin", "https://app.hrone.cloud");
         headers.add("referer", "https://app.hrone.cloud/app");
-        headers.add("priority", "u=1, i");
-        headers.add("sec-ch-ua", "\"Chromium\";v=\"142\", \"Google Chrome\";v=\"142\", \"Not_A Brand\";v=\"99\"");
-        headers.add("sec-ch-ua-mobile", "?0");
-        headers.add("sec-ch-ua-platform", "\"macOS\"");
-        headers.add("sec-fetch-dest", "empty");
-        headers.add("sec-fetch-mode", "cors");
-        headers.add("sec-fetch-site", "same-origin");
-        headers.add("x-requested-with", "https://app.hrone.cloud");
-        headers.add(
-                "user-agent",
-                "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) " +
-                        "AppleWebKit/537.36 (KHTML, like Gecko) " +
-                        "Chrome/142.0.0.0 Safari/537.36"
-        );
-        // If user has provided browser cookies, send them as-is
+
         if (cookieHeader != null && !cookieHeader.isBlank()) {
             headers.add("Cookie", cookieHeader);
+            log.info("🍪 Attached Cookie Header");
         }
 
         Map<String, Object> body = new HashMap<>();
-        body.put("requestType", requestType); // A = IN, P = OUT
+        body.put("requestType", requestType);
         body.put("applyRequestSource", 10);
         body.put("employeeId", employeeId);
         body.put("latitude", "");
@@ -108,23 +92,25 @@ public class HrOneClient {
         body.put("geoAccuracy", "");
         body.put("geoLocation", "");
         body.put("remarks", "");
-        body.put("uploadedPhotoOneName", "");
-        body.put("uploadedPhotoOnePath", "");
-        body.put("uploadedPhotoTwoName", "");
-        body.put("uploadedPhotoTwoPath", "");
-        body.put("attendanceSource", "W");
-        body.put("attendanceType", "Online");
 
-        // Match punchTime format: 2026-01-09T14:13 (IST, no seconds)
-        ZonedDateTime istTime =
-                ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
-        String punchTime =
-                istTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+        ZonedDateTime istTime = ZonedDateTime.now(ZoneId.of("Asia/Kolkata"));
+        String punchTime = istTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
         body.put("punchTime", punchTime);
 
+        log.info("🕒 Punch Time: {}", punchTime);
+        log.info("📤 Attendance body: {}", body);
+
         HttpEntity<?> entity = new HttpEntity<>(body, headers);
-        restTemplate.postForEntity(url, entity, String.class);
+
+        try {
+            var response = restTemplate.postForEntity(url, entity, String.class);
+            log.info("✅ Attendance API Response: {}", response.getBody());
+        } catch (HttpClientErrorException ex) {
+            log.error("❌ HRONE returned an ERROR");
+            log.error("Status: {}", ex.getStatusCode());
+            log.error("Response Body: {}", ex.getResponseBodyAsString());
+        } catch (Exception ex) {
+            log.error("❌ Unexpected error while marking attendance", ex);
+        }
     }
 }
-
-

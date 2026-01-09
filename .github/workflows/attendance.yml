@@ -9,6 +9,7 @@ on:
 jobs:
   run:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v4
 
@@ -17,11 +18,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Make gradlew executable
+        working-directory: NewProject
+        run: chmod +x gradlew
+
       - name: Run Attendance Bot
+        working-directory: NewProject
         env:
           HRONE_USERNAME: ${{ secrets.HRONE_USERNAME }}
           HRONE_PASSWORD: ${{ secrets.HRONE_PASSWORD }}
           HRONE_COOKIE: ${{ secrets.HRONE_COOKIE }}
         run: ./gradlew bootRun
-
-

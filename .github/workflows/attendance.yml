@@ -3,7 +3,7 @@ name: Attendance Bot
 on:
   schedule:
     - cron: "45 3 * * *"   # 09:15 AM IST → IN
-    - cron: "10 12 * * *"  # 05:40 PM IST → OUT (updated)
+    - cron: "0 18 * * *"  # 05:40 PM IST → OUT (updated)
   workflow_dispatch:
 
 jobs:

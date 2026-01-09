@@ -2,8 +2,8 @@ name: Attendance Bot
 
 on:
   schedule:
-    - cron: "45 3 * * *"   # 09:15 IST
-    - cron: "30 12 * * *"  # 06:00 PM IST
+    - cron: "45 3 * * *"   # 09:15 AM IST → IN
+    - cron: "10 12 * * *"  # 05:40 PM IST → OUT (updated)
   workflow_dispatch:
 
 jobs:
@@ -22,9 +22,10 @@ jobs:
         working-directory: NewProject
         run: chmod +x gradlew
 
-      - name: Run Attendance Bot
+      - name: Run Attendance Bot (Mode IN or OUT)
         working-directory: NewProject
         env:
+          ATT_MODE: ${{ github.event.schedule == '45 3 * * *' && 'IN' || 'OUT' }}
           HRONE_USERNAME: ${{ secrets.HRONE_USERNAME }}
           HRONE_PASSWORD: ${{ secrets.HRONE_PASSWORD }}
           HRONE_COOKIE: ${{ secrets.HRONE_COOKIE }}

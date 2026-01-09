@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 @Component
 public class HrOneClient {
+        private static final Logger log = LoggerFactory.getLogger(HrOneClient.class);
 
     private final RestTemplate restTemplate = new RestTemplate();
 

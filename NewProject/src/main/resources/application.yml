@@ -1,0 +1,8 @@
+hrone:
+  username: ${HRONE_USERNAME}
+  password: ${HRONE_PASSWORD}
+  employeeId: 884
+  # Optional: full Cookie header value copied from browser DevTools:
+  # e.g. "JwtTokenCookie=...; RefreshTokenCookie=..."
+  cookie: ${HRONE_COOKIE:}
+

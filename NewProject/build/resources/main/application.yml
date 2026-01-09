@@ -1,0 +1,8 @@
+hrone:
+  username: dhiraj.kumar@ongrid.in
+  password: Dk@motihari1
+  employeeId: 884
+  # Optional: full Cookie header value copied from browser DevTools:
+  # e.g. "JwtTokenCookie=...; RefreshTokenCookie=..."
+  cookie: ${HRONE_COOKIE:}
+

@@ -6,13 +6,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.TimeZone;
 import org.springframework.boot.CommandLineRunner;
 
 @SpringBootApplication
 public class AttendanceBotApplication implements CommandLineRunner {
-    private static final Logger log = LoggerFactory.getLogger(AttendanceBotApplication.class);
 
+    private static final Logger log = LoggerFactory.getLogger(AttendanceBotApplication.class);
     private final HrOneClient client;
 
     public AttendanceBotApplication(HrOneClient client) {
@@ -20,32 +19,34 @@ public class AttendanceBotApplication implements CommandLineRunner {
     }
 
     public static void main(String[] args) {
+        log.info("🚀 Attendance Bot Application Starting...");
         SpringApplication.run(AttendanceBotApplication.class, args);
     }
 
     @Override
     public void run(String... args) throws Exception {
 
-        // Determine whether this run is IN or OUT based on argument
-        String mode = System.getenv("ATT_MODE");  // passed from workflow
-        log.info("Attendance mode: " + mode);
+        String mode = System.getenv("ATT_MODE");
+        log.info("➡ ATT_MODE received: {}", mode);
 
         String token = client.loginAndGetToken();
-        log.info("Attendance bot token: " + token);
+        log.info("🔐 Login Token: {}", token != null ? "Received" : "NULL TOKEN!");
 
         if ("IN".equalsIgnoreCase(mode)) {
-            client.markAttendance(token, "A");   // A = IN
-            System.out.println("CHECKED IN");
-        } else if ("OUT".equalsIgnoreCase(mode)) {
-            client.markAttendance(token, "P");   // P = OUT
-            System.out.println("CHECKED OUT");
-        } else {
-            System.out.println("Unknown mode.");
+            log.info("🟢 Marking IN attendance...");
+            client.markAttendance(token, "A");
+            log.info("🏁 Finished IN attempt");
+        } 
+        else if ("OUT".equalsIgnoreCase(mode)) {
+            log.info("🔵 Marking OUT attendance...");
+            client.markAttendance(token, "P");
+            log.info("🏁 Finished OUT attempt");
+        } 
+        else {
+            log.error("❌ ERROR: Unknown attendance mode '{}'", mode);
         }
 
-        // exit properly
+        log.info("🛑 Bot execution completed. Exiting.");
         System.exit(0);
     }
 }
-
-

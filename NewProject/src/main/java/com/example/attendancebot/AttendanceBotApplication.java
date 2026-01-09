@@ -11,6 +11,7 @@ import org.springframework.boot.CommandLineRunner;
 
 @SpringBootApplication
 public class AttendanceBotApplication implements CommandLineRunner {
+    private static final Logger log = LoggerFactory.getLogger(AttendanceBotApplication.class);
 
     private final HrOneClient client;
 

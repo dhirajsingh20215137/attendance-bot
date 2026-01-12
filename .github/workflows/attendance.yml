@@ -5,8 +5,8 @@ permissions:
 
 on:
   schedule:
-    - cron: "45 3 * * *"     # IN at 09:15 AM IST
-    - cron: "30 12 * * *"    # OUT at 06:00 PM IST
+    - cron: "30 3 * * 1-5"     # IN at 09:00 AM IST, Mon–Fri
+    - cron: "30 12 * * 1-5"    # OUT at 06:00 PM IST, Mon–Fri
   workflow_dispatch:
 
 jobs:
@@ -34,7 +34,7 @@ jobs:
       - name: Run Attendance Bot (Mode IN or OUT)
         working-directory: NewProject
         env:
-          ATT_MODE: ${{ github.event.schedule == '45 3 * * *' && 'IN' || 'OUT' }}
+          ATT_MODE: ${{ github.event.schedule == '30 3 * * 1-5' && 'IN' || 'OUT' }}
           HRONE_USERNAME: ${{ secrets.HRONE_USERNAME }}
           HRONE_PASSWORD: ${{ secrets.HRONE_PASSWORD }}
           HRONE_COOKIE: ${{ secrets.HRONE_COOKIE }}

@@ -8,6 +8,7 @@ on:
     - cron: "0 1 * * 1-5"     # IN at 06:30 AM IST
     - cron: "0 2 * * 1-5"     # IN at 07:30 AM IST
     - cron: "30 12 * * 1-5"   # OUT at 06:00 PM IST
+    - cron: "30 11 * * 1-5"   # OUT at 06:00 PM IST
   workflow_dispatch:
 
 jobs:

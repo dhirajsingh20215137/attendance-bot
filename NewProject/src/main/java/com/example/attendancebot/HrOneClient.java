@@ -56,7 +56,7 @@ public class HrOneClient {
         HttpEntity<?> request = new HttpEntity<>(body, headers);
 
         Map<?, ?> response = restTemplate.postForObject(url, request, Map.class);
-        log.info("✅ Login response: {}", response);
+        log.info("✅ Login responses: {}", response);
 
         return (String) response.get("access_token");
     }
